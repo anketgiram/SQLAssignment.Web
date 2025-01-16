@@ -1,0 +1,254 @@
+﻿@model Assignmnet.EntityLayer.Models.PurchaseOrderViewModel
+
+@{
+    ViewData["Title"] = "Create Purchase Order";
+}
+
+<form asp-action="EditPurchaseOrder" method="post">
+    <div class="row">
+        <div class="col-6">
+            <h4>Create Purchase Order</h4>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div style="display:none;">
+            <div class="form-group" style="display:none;">
+                <label for="OrderNo" style="display:none;">Id</label>
+                <input asp-for="Purchaseorder.Id" type="hidden" class="form-control" id="OrderNo" />
+             
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <label for="OrderNo">Order No</label>
+                <input asp-for="Purchaseorder.OrderNo" class="form-control" id="OrderNo" placeholder="Enter Order Number" />
+                <span asp-validation-for="Purchaseorder.OrderNo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <label for="OrderDate">Order Date</label>
+                <input asp-for="Purchaseorder.OrderDate" type="date" class="form-control" id="OrderDate" />
+                <span asp-validation-for="Purchaseorder.OrderDate" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="VendorId">Vendor</label>
+        <select asp-for="Purchaseorder.VendorId" class="form-control" id="VendorId">
+            <option value="">-- Select Vendor --</option>
+            @foreach (var vendor in (IEnumerable<Assignmnet.EntityLayer.Models.Vendor>)ViewBag.Vendoredata)
+            {
+                <option value="@vendor.Id">@vendor.Name (@vendor.Code)</option>
+            }
+        </select>
+        <span asp-validation-for="Purchaseorder.VendorId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="Notes">Notes</label>
+        <textarea asp-for="Purchaseorder.Notes" class="form-control" id="Notes" rows="3" placeholder="Enter Notes"></textarea>
+        <span asp-validation-for="Purchaseorder.Notes" class="text-danger"></span>
+    </div>
+
+    <div class="col-6">
+        <div class="form-group mb-3">
+            <label for="OrderValue">Order Value</label>
+            <input asp-for="Purchaseorder.OrderValue" class="form-control" id="OrderValue" readonly />
+            <span asp-validation-for="Purchaseorder.OrderValue" class="text-danger"></span>
+        </div>
+    </div>
+
+    <hr />
+
+    <h4>Order Line Details</h4>
+
+    <div class="form-group mb-3">
+        <label for="MaterialId">Material</label>
+        <select class="form-control" id="MaterialId">
+            <option value="">-- Select Material --</option>
+            @foreach (var material in (IEnumerable<Assignmnet.EntityLayer.Models.Material>)ViewBag.Materialdata)
+            {
+                <option value="@material.Id">@material.ShortText (@material.Code)</option>
+            }
+        </select>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="form-group">
+                <label for="Quantity">Quantity</label>
+                <input type="number" class="form-control" id="Quantity" placeholder="Enter Quantity" />
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <label for="Rate">Rate</label>
+                <input type="number" class="form-control" id="Rate" placeholder="Enter Rate" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="form-group">
+                <label for="Amount">Amount</label>
+                <input type="text" class="form-control" id="Amount" readonly />
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <label for="ExpectedDate">Expected Date</label>
+                <input type="date" class="form-control" id="ExpectedDate" />
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" id="addLine">Add Line</button>
+    <hr />
+
+    <h4>Order Lines</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Expected Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="orderLines">
+            @if (Model.Purchaseorderdetail != null && Model.Purchaseorderdetail.Count > 0)
+            {
+                @for (int i = 0; i < Model.Purchaseorderdetail.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" name="Purchaseorderdetail[@i].MaterialId" value="@Model.Purchaseorderdetail[i].MaterialId" />
+                            @Model.Purchaseorderdetail[i].Material?.ShortText (@Model.Purchaseorderdetail[i].Material?.Code)
+                        </td>
+                        <td>
+                            <input type="number" name="Purchaseorderdetail[@i].Quantity" value="@Model.Purchaseorderdetail[i].Quantity" class="form-control" oninput="updateTotalOrderValue();" />
+                        </td>
+                        <td>
+                            <input type="number" name="Purchaseorderdetail[@i].Rate" value="@Model.Purchaseorderdetail[i].Rate" class="form-control" oninput="updateTotalOrderValue();" />
+                        </td>
+                        <td>
+                            <input type="number" name="Purchaseorderdetail[@i].Amount" value="@Model.Purchaseorderdetail[i].Amount" class="form-control" readonly />
+                        </td>
+                        <td>
+                            <input type="date" name="Purchaseorderdetail[@i].ExpectedDate" value="@Model.Purchaseorderdetail[i].ExpectedDate.ToString("yyyy-MM-dd")" class="form-control" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); updateTotalOrderValue();">Remove</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <hr />
+</form>
+
+<script>
+    let totalOrderValue = 0;
+    let lineIndex = 0;
+
+    function updateAmount() {
+        const quantity = document.getElementById("Quantity").value;
+        const rate = document.getElementById("Rate").value;
+        const amountField = document.getElementById("Amount");
+
+        if (quantity && rate) {
+            const amount = quantity * rate;
+            amountField.value = amount.toFixed(2);
+        } else {
+            amountField.value = '';
+        }
+    }
+
+    function updateTotalOrderValue() {
+        totalOrderValue = 0;
+        const rows = document.querySelectorAll("#orderLines tr");
+
+        rows.forEach(row => {
+            const amountInput = row.querySelector("input[name*='Amount']");
+            const amount = parseFloat(amountInput.value.trim());
+            if (!isNaN(amount)) {
+                totalOrderValue += amount;
+            }
+        });
+
+        document.getElementById("OrderValue").value = totalOrderValue.toFixed(2);
+    }
+
+    document.getElementById("Quantity").addEventListener("input", updateAmount);
+    document.getElementById("Rate").addEventListener("input", updateAmount);
+
+    document.getElementById("addLine").addEventListener("click", function () {
+        const materialSelect = document.getElementById("MaterialId");
+        const materialText = materialSelect.options[materialSelect.selectedIndex].text;
+        const materialId = materialSelect.value;
+        const quantity = document.getElementById("Quantity").value;
+        const rate = document.getElementById("Rate").value;
+        const amount = document.getElementById("Amount").value;
+        const expectedDate = document.getElementById("ExpectedDate").value;
+
+        if (!materialId || !quantity || !rate || !expectedDate) {
+            alert("Please fill in all the required fields.");
+            return;
+        }
+
+        const tableBody = document.getElementById("orderLines");
+        const row = tableBody.insertRow();
+
+        row.innerHTML = `
+            <td>
+                <input type="hidden" name="Purchaseorderdetail[${lineIndex}].MaterialId" value="${materialId}" />
+                ${materialText}
+            </td>
+            <td>
+                <input type="number" name="Purchaseorderdetail[${lineIndex}].Quantity" value="${quantity}" class="form-control" oninput="updateTotalOrderValue();" />
+            </td>
+            <td>
+                <input type="number" name="Purchaseorderdetail[${lineIndex}].Rate" value="${rate}" class="form-control" oninput="updateTotalOrderValue();" />
+            </td>
+            <td>
+                <input type="number" name="Purchaseorderdetail[${lineIndex}].Amount" value="${amount}" class="form-control" readonly />
+            </td>
+            <td>
+                <input type="date" name="Purchaseorderdetail[${lineIndex}].ExpectedDate" value="${expectedDate}" class="form-control" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('tr').remove(); updateTotalOrderValue();">Remove</button>
+            </td>
+        `;
+
+        updateTotalOrderValue();
+
+        lineIndex++;
+
+        // Reset the input fields
+        document.getElementById("MaterialId").value = "";
+        document.getElementById("Quantity").value = "";
+        document.getElementById("Rate").value = "";
+        document.getElementById("Amount").value = "";
+        document.getElementById("ExpectedDate").value = "";
+    });
+</script>

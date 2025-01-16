@@ -1,0 +1,48 @@
+﻿@using Assignmnet.EntityLayer.Models
+@model IEnumerable<Purchaseorder>
+
+
+<div class="row">
+    <div class="col-6">
+    <h2>Purchase List</h2>
+    </div>
+    <div class="col-6">
+    <a asp-controller="Purchase" asp-action="CreatePurchaseOrder" class="btn btn-primary">Create Purchase Entry</a>
+    </div>
+</div>
+
+
+
+<table class="table table-bordered table-striped mb-6">
+    <thead>
+        <tr>
+            <th hidden>ID</th>
+            <th>OrderNo</th>
+            <th>OrderDate</th>
+            <th>Vendor Name</th>
+            <th>OrderValue</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var purchase in Model)
+        {
+            <tr>
+                <td hidden>@purchase.Id</td>
+                <td>@purchase.OrderNo</td>
+                <td>@purchase.OrderDate</td>
+                <td>@purchase.Vendor.Name</td>
+                <td>@purchase.OrderValue</td>
+                <td>
+                    <a asp-controller="Purchase" asp-action="EditPurchaseOrder" asp-route-id="@purchase.Id" class="btn btn-warning btn-sm">Edit</a>
+         
+
+                    <a asp-controller="Purchase" asp-action="DeletePurchaseOrder" asp-route-id="@purchase.Id" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-controller="Purchase" asp-action="ViewPurchaseOrder" asp-route-id="@purchase.Id" class="btn btn-success btn-sm">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

@@ -1,0 +1,49 @@
+﻿@using Assignmnet.EntityLayer.Models
+@model IEnumerable<Material>
+
+
+
+
+<div class="row">
+    <div class="col-6">
+        <h2>Material List</h2>
+    </div>
+    <div class="col-6">
+        <a asp-controller="MaterialController1" asp-action="CreateMaterial" class="btn btn-primary">Create New Material</a>
+    </div>
+</div>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th hidden>ID</th>
+            <th>Code</th>
+            <th>MinOrderQuantity</th>
+            <th>Unit</th>
+            <th>Is Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var material in Model)
+        {
+            <tr>
+                <td hidden>@material.Id</td>
+                <td>@material.Code</td>
+                <td>@material.MinOrderQuantity</td>
+                <td>@material.Unit</td>
+                <td>@(material.IsActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-controller="MaterialController1" asp-action="EditMaterial" asp-route-id="@material.Id" class="btn btn-warning btn-sm">Edit</a>
+              
+
+                    <a asp-controller="MaterialController1" asp-action="DeleteMaterial" asp-route-id="@material.Id" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-controller="MaterialController1" asp-action="ViewMaterial" asp-route-id="@material.Id" class="btn btn-success btn-sm">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

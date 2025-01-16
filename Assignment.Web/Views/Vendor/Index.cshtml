@@ -1,0 +1,49 @@
+﻿@using Assignmnet.EntityLayer.Models
+@model IEnumerable<Vendor>
+
+
+
+<div class="row">
+    <div class="col-6">
+        <h2>Vendor List</h2>
+    </div>
+    <div class="col-6">
+        <a asp-controller="Vendor" asp-action="CreateVendor" class="btn btn-primary">Create New Vendor</a>
+    </div>
+</div>
+
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th hidden>ID</th>
+            <th>Name</th>
+            <th>Code</th>
+            <th>ValidTillDate</th>
+            <th>Is Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var vendor in Model)
+        {
+            <tr>
+                <td hidden>@vendor.Id</td>
+                <td>@vendor.Name</td>
+                <td>@vendor.Code</td>
+                <td>@vendor.ValidTillDate?.ToString("yyyy-MM-dd")</td>
+                <td>@(vendor.IsActive ? "Active" : "Inactive")</td>
+                <td>
+                    <a asp-controller="Vendor" asp-action="EditVendor" asp-route-id="@vendor.Id" class="btn btn-warning btn-sm">Edit</a>
+
+
+                    <a asp-controller="Vendor" asp-action="DeleteVendor" asp-route-id="@vendor.Id" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-controller="Vendor" asp-action="ViewVendor" asp-route-id="@vendor.Id" class="btn btn-success btn-sm">View</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

@@ -1,0 +1,126 @@
+﻿@model Assignmnet.EntityLayer.Models.PurchaseOrderViewModel
+
+@{
+    ViewData["Title"] = "Create Purchase Order";
+}
+
+<form asp-action="EditPurchaseOrder" method="post">
+    <div class="row">
+        <div class="col-6">
+            <h4>Create Purchase Order</h4>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+     
+                <a asp-action="Index" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div hidden class="col-6">
+        <div class="form-group">
+            <label for="OrderNo">Purchase Order ID</label>
+            <input asp-for="Purchaseorder.Id" class="form-control" id="Id" placeholder="Enter Id Number"  readonly/>
+
+        </div>
+    </div>
+
+
+    <div class="row mb-3">
+        <div class="col-6">
+            <div class="form-group">
+                <label for="OrderNo">Order No</label>
+                <input asp-for="Purchaseorder.OrderNo" class="form-control" id="OrderNo" placeholder="Enter Order Number" readonly />
+                <span asp-validation-for="Purchaseorder.OrderNo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="form-group">
+                <label for="OrderDate">Order Date</label>
+                <input asp-for="Purchaseorder.OrderDate" type="date" class="form-control" id="OrderDate" readonly />
+                <span asp-validation-for="Purchaseorder.OrderDate" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="VendorId">Vendor</label>
+        <select asp-for="Purchaseorder.VendorId" class="form-control" id="VendorId" readonly>
+            <option value="">-- Select Vendor --</option>
+            @foreach (var vendor in (IEnumerable<Assignmnet.EntityLayer.Models.Vendor>)ViewBag.Vendoredata)
+            {
+                <option value="@vendor.Id">@vendor.Name (@vendor.Code)</option>
+            }
+        </select>
+        <span asp-validation-for="Purchaseorder.VendorId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="Notes">Notes</label>
+        <textarea asp-for="Purchaseorder.Notes" class="form-control" id="Notes" rows="3" placeholder="Enter Notes" readonly></textarea>
+        <span asp-validation-for="Purchaseorder.Notes" class="text-danger"></span>
+    </div>
+
+    <div class="col-6">
+        <div class="form-group mb-3">
+            <label for="OrderValue">Order Value</label>
+            <input asp-for="Purchaseorder.OrderValue" class="form-control" id="OrderValue" readonly />
+            <span asp-validation-for="Purchaseorder.OrderValue" class="text-danger"></span>
+        </div>
+    </div>
+
+    <hr />
+
+    
+    <h4>Order Lines</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Material</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+                <th>Expected Date</th>
+              
+            </tr>
+        </thead>
+        <tbody id="orderLines">
+            @if (Model.Purchaseorderdetail != null && Model.Purchaseorderdetail.Count > 0)
+            {
+                @for (int i = 0; i < Model.Purchaseorderdetail.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" name="Purchaseorderdetail[@i].MaterialId" value="@Model.Purchaseorderdetail[i].MaterialId" readonly />
+                            @Model.Purchaseorderdetail[i].Material?.ShortText (@Model.Purchaseorderdetail[i].Material?.Code)
+                        </td>
+                        <td>
+                            <input type="number" name="Purchaseorderdetail[@i].Quantity" value="@Model.Purchaseorderdetail[i].Quantity" class="form-control" readonly />
+                        </td>
+                        <td>
+                            <input type="number" name="Purchaseorderdetail[@i].Rate" value="@Model.Purchaseorderdetail[i].Rate" class="form-control" readonly />
+                        </td>
+                        <td>
+                            <input type="number" name="Purchaseorderdetail[@i].Amount" value="@Model.Purchaseorderdetail[i].Amount" class="form-control" readonly />
+                        </td>
+                        <td>
+                            <input type="date" name="Purchaseorderdetail[@i].ExpectedDate" value="@Model.Purchaseorderdetail[i].ExpectedDate.ToString("yyyy-MM-dd")" class="form-control" readonly />
+                        </td>
+                       
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <hr />
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

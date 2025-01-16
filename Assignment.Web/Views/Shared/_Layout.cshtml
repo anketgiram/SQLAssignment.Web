@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Assignment.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Assignment.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Vertical Navbar -->
+            <nav class="col-md-2 col-lg-2 sidebar bg-light p-3" style="height: 100vh; position: fixed;">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Assignment.Web</a>
+                <ul class="navbar-nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Vendor" asp-action="Index">Vendor</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="MaterialController1" asp-action="Index">Material</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Purchase" asp-action="Index">Purchase</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-10 offset-md-2 pt-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - Assignment.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
