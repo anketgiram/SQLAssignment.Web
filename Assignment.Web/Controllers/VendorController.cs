@@ -206,8 +206,9 @@ namespace Assignment.Web.Controllers
                         var getvendor = await _unitOfWork.VendorService.DeleteVendorById(data.Id);
                         if (getvendor == 1)
                         {
-                            transcation.CommitAsync();
-                            _context.SaveChangesAsync();
+                          
+                           await _context.SaveChangesAsync();
+                           await transcation.CommitAsync();
                             TempData["sucess"] = "Record edited Sccessfully";
                             TempData["Valid"] = "0";
                             return RedirectToAction("Index");

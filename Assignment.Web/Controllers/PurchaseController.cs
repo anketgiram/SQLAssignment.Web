@@ -286,6 +286,7 @@ namespace Assignment.Web.Controllers
 
                         if (updatePurchaseOrder >= 1)
                         {
+                            await _context.SaveChangesAsync();
                             await transaction.CommitAsync();
                             TempData["success"] = "Purchase Order Deleted !";
                             TempData["Valid"] = "0";

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create Purchase Order";
 }
 
-<form asp-action="EditPurchaseOrder" method="post">
+<form asp-action="EditPurchaseOrder" method="post" onsubmit="return validateOrderDetails();">
     <div class="row">
         <div class="col-6">
             <h4>Create Purchase Order</h4>
@@ -22,7 +22,7 @@
         <div style="display:none;">
             <div class="form-group" style="display:none;">
                 <label for="OrderNo" style="display:none;">Id</label>
-                <input asp-for="Purchaseorder.Id" type="hidden" class="form-control" id="OrderNo" />
+                <input asp-for="Purchaseorder.Id" type="hidden" required class="form-control" id="OrderNo" />
              
             </div>
         </div>
@@ -30,7 +30,7 @@
         <div class="col-6">
             <div class="form-group">
                 <label for="OrderNo">Order No</label>
-                <input asp-for="Purchaseorder.OrderNo" class="form-control" id="OrderNo" placeholder="Enter Order Number" />
+                <input asp-for="Purchaseorder.OrderNo" class="form-control" id="OrderNo" required placeholder="Enter Order Number" />
                 <span asp-validation-for="Purchaseorder.OrderNo" class="text-danger"></span>
             </div>
         </div>
@@ -38,7 +38,7 @@
         <div class="col-6">
             <div class="form-group">
                 <label for="OrderDate">Order Date</label>
-                <input asp-for="Purchaseorder.OrderDate" type="date" class="form-control" id="OrderDate" />
+                <input asp-for="Purchaseorder.OrderDate" type="date" class="form-control" required id="OrderDate" />
                 <span asp-validation-for="Purchaseorder.OrderDate" class="text-danger"></span>
             </div>
         </div>
@@ -58,14 +58,14 @@
 
     <div class="form-group mb-3">
         <label for="Notes">Notes</label>
-        <textarea asp-for="Purchaseorder.Notes" class="form-control" id="Notes" rows="3" placeholder="Enter Notes"></textarea>
+        <textarea asp-for="Purchaseorder.Notes" class="form-control" id="Notes" rows="3" required  placeholder="Enter Notes"></textarea>
         <span asp-validation-for="Purchaseorder.Notes" class="text-danger"></span>
     </div>
 
     <div class="col-6">
         <div class="form-group mb-3">
             <label for="OrderValue">Order Value</label>
-            <input asp-for="Purchaseorder.OrderValue" class="form-control" id="OrderValue" readonly />
+            <input asp-for="Purchaseorder.OrderValue" class="form-control" id="OrderValue" required readonly />
             <span asp-validation-for="Purchaseorder.OrderValue" class="text-danger"></span>
         </div>
     </div>
@@ -167,6 +167,17 @@
 </form>
 
 <script>
+    function validateOrderDetails() {
+        const orderLines = document.querySelectorAll("#orderLines tr");
+        if (orderLines.length === 0) {
+            alert("Please add at least one order detail before submitting.");
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<script>
     let totalOrderValue = 0;
     let lineIndex = 0;
 
@@ -183,20 +194,58 @@
         }
     }
 
+
+     function updateRowAmountAndTotal(row) {
+        const quantityInput = row.querySelector("input[name*='Quantity']");
+        const rateInput = row.querySelector("input[name*='Rate']");
+        const amountInput = row.querySelector("input[name*='Amount']");
+
+        const quantity = parseFloat(quantityInput.value) || 0;
+        const rate = parseFloat(rateInput.value) || 0;
+
+
+        const amount = quantity * rate;
+        amountInput.value = amount.toFixed(2);
+
+
+        updateTotalOrderValue();
+    }
+
     function updateTotalOrderValue() {
-        totalOrderValue = 0;
+        let totalOrderValue = 0;
         const rows = document.querySelectorAll("#orderLines tr");
 
         rows.forEach(row => {
             const amountInput = row.querySelector("input[name*='Amount']");
-            const amount = parseFloat(amountInput.value.trim());
-            if (!isNaN(amount)) {
-                totalOrderValue += amount;
-            }
+            const amount = parseFloat(amountInput.value) || 0;
+            totalOrderValue += amount;
         });
 
         document.getElementById("OrderValue").value = totalOrderValue.toFixed(2);
     }
+
+
+    document.addEventListener("input", function (event) {
+        if (event.target.matches("input[name*='Quantity'], input[name*='Rate']")) {
+            const row = event.target.closest("tr");
+            updateRowAmountAndTotal(row);
+        }
+    });
+
+    // function updateTotalOrderValue() {
+    //     totalOrderValue = 0;
+    //     const rows = document.querySelectorAll("#orderLines tr");
+
+    //     rows.forEach(row => {
+    //         const amountInput = row.querySelector("input[name*='Amount']");
+    //         const amount = parseFloat(amountInput.value.trim());
+    //         if (!isNaN(amount)) {
+    //             totalOrderValue += amount;
+    //         }
+    //     });
+
+    //     document.getElementById("OrderValue").value = totalOrderValue.toFixed(2);
+    // }
 
     document.getElementById("Quantity").addEventListener("input", updateAmount);
     document.getElementById("Rate").addEventListener("input", updateAmount);
@@ -244,7 +293,7 @@
 
         lineIndex++;
 
-        // Reset the input fields
+
         document.getElementById("MaterialId").value = "";
         document.getElementById("Quantity").value = "";
         document.getElementById("Rate").value = "";
